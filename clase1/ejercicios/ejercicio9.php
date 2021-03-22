@@ -31,5 +31,4 @@ foreach($lapicera3 as $l=>$datos)
     echo $l . ":" . $datos . " | ";
 }
 $cont++;
-
 ?>
