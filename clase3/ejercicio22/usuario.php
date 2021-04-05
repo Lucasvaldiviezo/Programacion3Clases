@@ -61,6 +61,35 @@ class Usuario
         return $cadena;
     }
 
+    public static function Login($usuario)
+    {
+        $retorno = "Error inesperado";
+        $arrayUsuario = Usuario::Leer("usuarios.csv");
+        echo "Datos del Usuario a Validar: " . $usuario->mail . " | " . $usuario->nombre . " | " . $usuario->clave . "\n";
+        foreach($arrayUsuario as $usuarioAux)
+        {
+            echo  $usuarioAux->mail . "\n";
+            if($usuarioAux->mail == $usuario->mail)
+            {
+                if($usuarioAux->clave == $usuario->clave)
+                {
+                    $retorno = "Verificado";
+                    break;
+                }else
+                {
+                    $retorno = "Error en los datos";
+                    break;
+                }
+            }else
+            {
+                $retorno = "Usuario no registrado";
+            }
+        }
+
+        return $retorno;
+    }
+
+
 }
 
 ?>

@@ -8,21 +8,19 @@ if(isset($_POST["nombre"]) && isset($_POST["clave"]) && $_POST["mail"])
     $mail = $_POST["mail"];
     $usuario = new Usuario($nombre,$clave,$mail);
 
-    $archivo = fopen("usuarios.csv","a");
-    fwrite($archivo, $usuario->Mostrar());
-    $bool = fclose($archivo);
+    $bool = $usuario->Guardar();
 
-    echo $usuario->Mostrar();
-    if($bool == true)
+    if($bool != false)
     {
-        echo 'Se Cerro ;)';
+        echo 'Se guardaron los datos';
     }else
     {
-        echo 'No se cerro u.u';
+        echo 'No se guardaron los datos';
     }
+
 }else
 {
-    echo 'Complete todos los datos en el POST';
+    echo 'Complete todos los datos';
 }
 
 

@@ -13,12 +13,19 @@ class Usuario
             $this->mail = $mail;
     }
 
-    public function Mostrar()
+    public function UsuarioToCSV()
     {
         $cadena =  $this->nombre . "," . $this->clave . "," . $this->mail . ",\n";
         return $cadena;
     }
-}
 
+    public function Guardar()
+    {
+        $archivo = fopen("usuarios.csv","a");
+        $bool = fwrite($archivo, $this->UsuarioToCSV());
+        fclose($archivo);
+        return $bool;
+    }
+}
 
 ?>
