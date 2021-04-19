@@ -2,15 +2,21 @@
 
 class Usuario
 {
+    public $id;
     public $nombre;
     public $clave;
     public $mail;
+    public $fecha;
+    public $destino;
 
-    public function __construct($nombre,$clave,$mail)
+    public function __construct($nombre,$clave,$mail,$destino)
     {
+            $this->id = rand(1,10000);
             $this->nombre = $nombre;
             $this->clave = $clave;
             $this->mail = $mail;
+            $this->fecha = getdate();
+            $this->destino = $destino;
     }
 
     public function UsuarioToCSV()
@@ -19,15 +25,43 @@ class Usuario
         return $cadena;
     }
 
-    public function Guardar()
+    public function UsuarioToJSON()
     {
-        $archivo = fopen("usuarios.csv","a");
-        $bool = fwrite($archivo, $this->UsuarioToCSV());
+        $cadena =  json_encode($this) . "\n";
+        return $cadena;
+    }
+
+    public function Guardar($ruta,$formato)
+    {
+        $archivo = fopen($ruta,"a");
+        if($formato == "csv")
+        {
+            $bool = fwrite($archivo, $this->UsuarioToCSV());
+        }else if($formato == "json")
+        {
+            $bool = fwrite($archivo, $this->UsuarioToJSON());
+        }
         fclose($archivo);
         return $bool;
     }
 
-    public static function Leer($ruta)
+    public static function LeerJSON($ruta)
+    {
+        $archivo = fopen($ruta,"r");
+        $arrayUsuarios = [];
+        while(!feof($archivo))
+        {
+            $linea = fgets($archivo);
+            if(!empty($linea))
+            {
+                array_push($arrayUsuarios,$linea);
+            }                
+        }
+        fclose($archivo);
+        return $arrayUsuarios;
+    }
+
+    public static function LeerCSV($ruta)
     {
         $arrayUsuarios = [];
         
@@ -88,7 +122,6 @@ class Usuario
 
         return $retorno;
     }
-
 
 }
 
