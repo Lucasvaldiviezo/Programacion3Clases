@@ -1,5 +1,7 @@
 <?php
 include "usuario.php";
+include "producto.php";
+include "ventas.php";
 
 if(isset($_GET["listado"]))
 {
@@ -13,7 +15,15 @@ if(isset($_GET["listado"]))
         break;
         
         case "productos":
-            echo 'No tenemos esa lista aun';
+            $arrayProductos = Producto::TraerTodoLosProductos();
+            $dibujo = Producto::DibujarListado($arrayProductos);
+            echo $dibujo;
+        break;
+        
+        case "ventas":
+            $arrayVentas = Ventas::TraerTodoLasVentas();
+            $dibujo = Ventas::DibujarListado($arrayVentas);
+            echo $dibujo;
         break;
 
         default:
