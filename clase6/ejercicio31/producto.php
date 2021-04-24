@@ -16,14 +16,14 @@ class Producto{
     }
     public function __construct1($codigo,$nombre,$tipo,$stock,$precio)
     { 
-        if($this->ValidarCodigo($codigo,999999))
+        if($this->ValidarCodigo($codigo,99999999))
         {
             $this->codigo = $codigo;
             $this->nombre = $nombre;
             $this->tipo = $tipo;
             $this->stock = $stock;
             $this->precio = $precio;
-            $this->Fechaderegistro = date("y-m-d");
+            $this->Fechadecreacion = date("y-m-d");
             $this->Fechademodificacion = date("y-m-d");
         }
     }
@@ -35,6 +35,18 @@ class Producto{
 			$consulta->execute();			
 			return $consulta->fetchAll(PDO::FETCH_CLASS,"Producto");		
 	}
+
+    public static function TraerProducto($codigo)
+    {
+        $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
+		$consulta =$objetoAccesoDato->RetornarConsulta("select id,codigo as codigo,nombre as nombre, tipo as tipo,stock as stock,precio as precio, Fechadecreacion as Fechadecreacion, Fechademodificacion as Fechademodificacion from productos WHERE codigo = $codigo");
+		$consulta->execute();
+        $retorno = $consulta->fetchObject("Producto");	
+
+        return $retorno;
+    }
+
+
 
     public static function DibujarListado($arrayProductos)
     {
@@ -64,10 +76,67 @@ class Producto{
         return $objetoAccesoDato->RetornarUltimoIdInsertado();
     }
 
+    public function AumentarStock($stock,$codigo)
+	{
+            $auxProducto = self::TraerProducto($codigo);
+			$objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
+			$consulta =$objetoAccesoDato->RetornarConsulta("
+				update productos 
+				set stock = stock + :stock
+				WHERE id=:id");
+			$consulta->bindValue(':id',$auxProducto->id, PDO::PARAM_INT);
+			$consulta->bindValue(':stock',$stock, PDO::PARAM_INT);
+			return $consulta->execute();
+	}
+    
+    public function ReducirStock($stock,$codigo)
+	 {
+            $auxProducto = self::TraerProducto($codigo);
+			$objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
+			$consulta =$objetoAccesoDato->RetornarConsulta("
+				update productos 
+				set stock = stock - :stock
+				WHERE id=:id");
+			$consulta->bindValue(':id',$auxProducto->id, PDO::PARAM_INT);
+			$consulta->bindValue(':stock',$stock, PDO::PARAM_INT);
+			return $consulta->execute();
+	 }
 
+    public static function GuardarBD($producto)
+    {
+        $retorno = "No se pudo hacer";
+        if(self::ProductoExisteDB($producto))
+        {
+            $producto->AumentarStock($producto->stock,$producto->codigo);
+            $retorno = "Actualizado";
+        }else
+        {
+            echo $producto->InsertarProducto();
+            $retorno = "Ingresado";
+        }
 
+        return $retorno;
+    }
 
-    public static function VerificarProducto($codigo,$ruta)
+    public static function ProductoExisteDB($producto)
+    {
+        $retorno = false;
+        $arrayProductos = self::TraerTodoLosProductos();
+        if(isset($arrayProductos))
+        {
+            foreach($arrayProductos as $auxProducto)
+            {
+                if($producto->codigo == $auxProducto->codigo && $producto->nombre == $auxProducto->nombre)
+                {
+                    $retorno = true;
+                    break;
+                }
+            }
+        }
+        return $retorno;
+    }
+
+    public static function ProductoExisteArchivo($codigo,$ruta)
     {
         $retorno = false;
         $arrayProductos = Producto::LeerJSON($ruta);
