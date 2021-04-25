@@ -88,21 +88,33 @@ class Usuario
         return $retorno;
     }
 
-    //Filtros
+    public static function DibujarListado($arrayUsuarios)
+    {
+        $cadena = "<ul>";
+        foreach($arrayUsuarios as $usuario)
+        {
+            $cadena .= "<li>" . $usuario->nombre . " - " . $usuario->apellido . " - " . $usuario->mail .  "</li>";
+        }
+        $cadena .= "</ul>";
+     
+        return $cadena;
+    }
 
+
+    //Filtros
     public static function TraerUsuariosOrdenados($orden)
     {
         $retorno = "No se pudo traer la lista";
         if($orden == "ASC" || $orden == "DESC")
         {
             $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
-		    $consulta =$objetoAccesoDato->RetornarConsulta("select id,nombre as nombre, apellido as apellido,clave as clave,mail as mail, Fechaderegistro as Fechaderegistro, localidad as localidad from usuarios ORDER BY apellido,nombre :orden");
-            $consulta->bindValue(':orden', $orden, PDO::PARAM_STR);
+		    $consulta =$objetoAccesoDato->RetornarConsulta("select id,nombre as nombre, apellido as apellido,clave as clave,mail as mail, Fechaderegistro as Fechaderegistro, localidad as localidad from usuarios ORDER BY apellido $orden,nombre $orden");
 		    $consulta->execute();
             $retorno = $consulta->fetchAll(PDO::FETCH_CLASS,"Usuario");	
         }	
 		return $retorno;
     }
+
     
 }
 ?>
