@@ -103,5 +103,37 @@ class Ventas{
         return $resultado;
     }
 
+    public static function TotalDeCadaVenta()
+    {
+        $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
+        $consulta =$objetoAccesoDato->RetornarConsulta("select ventas.id as id,TRUNCATE(ventas.cantidad*productos.precio,2) as total FROM ventas,productos WHERE ventas.id_producto = productos.id");
+        $consulta->execute();			
+        $resultado = $consulta->fetchAll(PDO::FETCH_ASSOC);
+        return $resultado;
+    }
+
+    public static function CantidadProductoVendidoUsuario($idProducto,$idUsuario)
+    {
+        $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
+        $consulta =$objetoAccesoDato->RetornarConsulta("select ventas.id as id, SUM(cantidad) as cantidad FROM ventas WHERE id_producto = :idProducto AND id_usuario = :idUsuario");
+        $consulta->bindValue(':idProducto', $idProducto, PDO::PARAM_INT);
+        $consulta->bindValue(':idUsuario', $idUsuario, PDO::PARAM_INT);
+        $consulta->execute();			
+        $resultado = $consulta->fetchAll(PDO::FETCH_ASSOC);
+        return $resultado;
+    }
+
+    public static function VentaEntreFechas($fecha1,$fecha2)
+	{
+        $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
+        $consulta =$objetoAccesoDato->RetornarConsulta("select id,id_producto as idProducto,id_usuario as idUsuario, cantidad as cantidad,Fechadeventa as Fechadeventa from ventas WHERE Fechadeventa BETWEEN :fecha1 AND :fecha2");
+        $consulta->bindValue(':fecha1', $fecha1, PDO::PARAM_STR);
+        $consulta->bindValue(':fecha2', $fecha2, PDO::PARAM_STR);
+        $consulta->execute();			
+        return $consulta->fetchAll(PDO::FETCH_CLASS,"Ventas");
+	}
+
+    
+
 }
 ?>

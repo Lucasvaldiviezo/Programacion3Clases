@@ -310,6 +310,14 @@ class Producto{
 		return $retorno;
     }
 
-    
+    public static function ProductoVendidoLocalidad($localidad)
+    {
+        $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
+        $consulta =$objetoAccesoDato->RetornarConsulta("select codigo as codigo FROM productos,ventas,usuarios WHERE ventas.id_producto = productos.id AND ventas.id_usuario = usuarios.id AND usuarios.localidad = :localidad");
+        $consulta->bindValue(':localidad', $localidad, PDO::PARAM_STR);
+        $consulta->execute();			
+        $resultado = $consulta->fetchAll(PDO::FETCH_ASSOC);
+        return $resultado;
+    }
 }
 ?>

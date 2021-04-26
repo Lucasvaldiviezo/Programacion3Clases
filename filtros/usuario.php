@@ -115,6 +115,21 @@ class Usuario
 		return $retorno;
     }
 
+    public static function TraerUsuariosPorLetras($filtro,$columna)
+    {
+        $retorno = "Esa columna no es valida";
+        if($columna == "nombre" || $columna == "apellido")
+        {  
+            $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
+            $consulta =$objetoAccesoDato->RetornarConsulta("select id,nombre as nombre, apellido as apellido,clave as clave,mail as mail, Fechaderegistro as Fechaderegistro, localidad as localidad from usuarios WHERE $columna LIKE '%$filtro%' ");
+            $consulta->execute();
+            $retorno = $consulta->fetchAll(PDO::FETCH_CLASS,"Usuario");	
+        }
+        
+		return $retorno;
+    }
+
+
     
 }
 ?>
