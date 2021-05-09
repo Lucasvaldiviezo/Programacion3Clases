@@ -133,6 +133,18 @@ class Ventas{
         return $consulta->fetchAll(PDO::FETCH_CLASS,"Ventas");
 	}
 
+    //FILTROS-----
+
+    public static function CantidadVendidaPizza()
+    {
+        $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
+        $consulta =$objetoAccesoDato->RetornarConsulta("select ventas.id as id, SUM(cantidad) as cantidad FROM ventas");
+        $consulta->execute();			
+        $resultado = $consulta->fetchAll(PDO::FETCH_ASSOC);
+        return $resultado;
+    }
+
+
     
 
 }
